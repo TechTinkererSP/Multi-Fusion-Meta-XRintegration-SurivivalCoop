@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections.Generic;
 
 namespace Fusion.XR.Shared.Rig
 {
@@ -42,6 +43,10 @@ namespace Fusion.XR.Shared.Rig
         public HardwareHand leftHand;
         public HardwareHand rightHand;
         public HardwareHeadset headset;
+
+      
+
+
 
         [Serializable]
         public class TeleportEvent : UnityEvent<Vector3, Vector3> { }
