@@ -175,6 +175,10 @@ PrefabInstance:
       propertyPath: NetworkedBehaviours.Array.data[20]
       value: 
       objectReference: {fileID: 3604650287891661015}
+    - target: {fileID: 8454779630868432372, guid: 555916090d4b2d44d85ff81b34139c2b, type: 3}
+      propertyPath: hardwareRig
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8454779630868432373, guid: 555916090d4b2d44d85ff81b34139c2b, type: 3}
       propertyPath: SyncScale
       value: 0

@@ -5,6 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 1
+    path: Assets/_Scenes/SharedMode.unity
+    guid: 3e9954be770fd344b85ec1f95640ff5c
   - enabled: 0
     path: Assets/Scenes/Multiplayer-MR-MetaAvatar-Colocation.unity
     guid: 2e5c54a4a37407d4e85596c0e82607c6
@@ -26,6 +29,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/2_PlayerSpawning-spawnPoints.unity
     guid: 2d2215777f22c254c808d50eb8f6f868
+  - enabled: 0
+    path: Assets/_Scenes/MainUI.unity
+    guid: 708e97e5ffa72a04d997908f82e13ba9
+  - enabled: 0
+    path: Assets/_Scenes/GameArea.unity
+    guid: 0b4b20196d8ad1b4f8d26c8eaa2d2adf
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 4f68ddc6b699d1b43a970e211e4c7ae0, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: f7c99e3480555744e9a379ea516af73e, type: 2}

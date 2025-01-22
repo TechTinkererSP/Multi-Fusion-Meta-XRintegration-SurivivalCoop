@@ -4195,7 +4195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: 5817f7c0-f2a5-45f9-a5ca-64264e0166e8
-  instanceId: 43525188-8811-470d-b087-c0f43364028d
+  instanceId: d7f2eed0-f765-45ee-b577-7a9552e960ab
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -5808,7 +5808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: 5817f7c0-f2a5-45f9-a5ca-64264e0166e8
-  instanceId: a1196bea-0bb3-4437-8738-eaed531d60ba
+  instanceId: 7a94a026-892c-4afa-b444-52ea5a55eac5
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -6881,7 +6881,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: 8b26b298-7bf4-490e-b245-a039c0184303
-  instanceId: 4f1af22e-ac48-4a96-91bd-1fd74887bf9a
+  instanceId: 41d04335-2f99-4ede-89ca-63a83d39f977
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -7409,7 +7409,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: 81f55626-5fad-45e9-a1df-184f330da7ba
-  instanceId: 909afdc3-aa9d-4a3d-9232-ee611a5abf4f
+  instanceId: dc659c41-ed0d-40a5-b4da-74af47638cc3
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -8019,7 +8019,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: 8b26b298-7bf4-490e-b245-a039c0184303
-  instanceId: 6603ac53-a2e5-465e-a3f8-cea86d29d71f
+  instanceId: d4376e4e-47f6-4a52-96e5-bf3fb0d7e7e0
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -10015,7 +10015,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: 6b67162c-2460-4766-a931-980388647573
-  instanceId: 50f26b6c-1cce-4504-b415-06baf4f1030e
+  instanceId: 9805694a-a1c7-447c-8599-f33ff8096988
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -11200,7 +11200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: f10154e0-16b2-492f-97d0-6639f69e7df6
-  instanceId: e21aa961-6824-47d4-bff3-e4cb43917d41
+  instanceId: daa05e2c-1149-4e42-beba-11a9bcaea2f2
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -12470,7 +12470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: 6b67162c-2460-4766-a931-980388647573
-  instanceId: 84f44767-0dbd-4af2-96cb-7470260cd283
+  instanceId: ba13b88a-0cc4-465c-b555-4023d9222c69
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -17492,7 +17492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: 0393ca30-f2a9-4865-a40f-f9a68d01c3a9
-  instanceId: 38014b95-4288-4cac-b625-74dc433e03b5
+  instanceId: 4b92f710-82b6-43b0-8722-ad2dc620ed1f
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -17641,6 +17641,8 @@ GameObject:
   - component: {fileID: 1147121806200488664}
   - component: {fileID: 4550582374485057062}
   - component: {fileID: 8341111943645268000}
+  - component: {fileID: 6211237689918558645}
+  - component: {fileID: 4013999065732416001}
   m_Layer: 0
   m_Name: SharadMetaHardwareRig
   m_TagString: Untagged
@@ -17678,7 +17680,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockId: e47682b9-c270-40b1-b16d-90b627a5ce1b
-  instanceId: b95ab2e4-47fd-4ec3-9f55-7adf872af7aa
+  instanceId: 62a6f4a9-f104-4acb-9270-308795757608
   version: 1
   installationRoutineCheckpoint:
     _installationRoutineId: 
@@ -17806,9 +17808,41 @@ MonoBehaviour:
   leftHand: {fileID: 3968481825317941592}
   rightHand: {fileID: 1842693621356286900}
   headset: {fileID: 3898257226392028941}
+  spawnPoints: []
   onTeleport:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6211237689918558645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8905160879239061927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77d177e78ff5eda4b8630949d0d8c9d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OVRRig: {fileID: 8905160879239061927}
+--- !u!114 &4013999065732416001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8905160879239061927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 2023995422
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 6211237689918558645}
 --- !u!1 &8944371055714849901
 GameObject:
   m_ObjectHideFlags: 0

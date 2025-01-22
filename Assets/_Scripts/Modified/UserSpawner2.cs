@@ -10,6 +10,7 @@ namespace Fusion.XR.Shared
 
     public class UserSpawner2 : MonoBehaviour, IUserSpawner, INetworkRunnerCallbacks
     {
+
         [Header("Fusion settings")]
         [Tooltip("Fusion runner. Automatically created if not set, on the object, or in the scene")]
         public NetworkRunner runner;
@@ -31,24 +32,10 @@ namespace Fusion.XR.Shared
         [Tooltip("A list of spawn points where players will spawn.")]
         public List<Transform> spawnPoints = new List<Transform>();
 
-        private int currentSpawnIndex = 0;
+        //private int currentSpawnIndex = 0;
 
-        // Get the next spawn point and cycle through the list
-        private Transform GetNextSpawnPoint()
-        {
-            if (spawnPoints == null || spawnPoints.Count == 0)
-            {
-                Debug.LogError("No spawn points assigned! Please assign spawn points in the inspector.");
-                return transform; // Default to the UserSpawner2 object's position
-            }
+        [Networked] private int currentSpawnIndex { get; set; }
 
-            Transform spawnPoint = spawnPoints[currentSpawnIndex];
-            currentSpawnIndex = (currentSpawnIndex + 1) % spawnPoints.Count; // Cycle to the next index
-            return spawnPoint;
-        }
-
-
-        //---
 
 
 
@@ -65,7 +52,19 @@ namespace Fusion.XR.Shared
 
             // Create the Fusion runner and let it know that we will be providing user input
             if (runner == null) runner = gameObject.AddComponent<NetworkRunner>();
+
+            if (spawnPoints == null || spawnPoints.Count == 0)
+            {
+                Debug.LogError("No spawn points assigned! Please assign spawn points in the inspector.");
+                //return transform; // Default to the UserSpawner2 object's position
+            }
+
+
         }
+
+
+
+        //---
 
         private void Start()
         {
@@ -77,19 +76,76 @@ namespace Fusion.XR.Shared
         }
 
         #region Player spawn
+
+        // private readonly object spawnPointLock = new object();
+        // // Get the next spawn point and cycle through the list
+        // public Transform GetNextSpawnPoint()
+        // {
+        //     lock (spawnPointLock) // Ensure only one thread accesses this block at a time
+        //     {
+        //         if (spawnPoints.Count == 0)
+        //         {
+        //             Debug.LogError("No spawn points assigned!");
+        //             return null;
+        //         }
+
+        //         Transform spawnPoint = spawnPoints[currentSpawnIndex];
+        //         currentSpawnIndex = (currentSpawnIndex + 1) % spawnPoints.Count; // Cycle the index
+        //         return spawnPoint;
+        //     }
+        // }
+
+        //  private int currentSpawnIndex = 0;
+
+        public Transform GetNextSpawnPoint()
+        {
+            if (spawnPoints.Count == 0 )
+            {
+                Debug.LogError("No spawn points assigned!");
+                return null;
+            }
+
+            Debug.Log($"Current Spawn Index: {currentSpawnIndex}");
+
+            // Use the current index and increment it
+            int spawnIndex = currentSpawnIndex;
+            currentSpawnIndex = (currentSpawnIndex + 1) % spawnPoints.Count; // Cycle the index
+            Debug.Log($"New Spawn Index: {currentSpawnIndex}");
+            return spawnPoints[spawnIndex];
+
+        }
+
+
+
+
+
+
+
         public void OnPlayerJoinedSharedMode(NetworkRunner runner, PlayerRef player)
         {
             if (player == runner.LocalPlayer && userPrefab != null)
             {
-                //--- Get the next spawn point
+                Debug.Log($"OnPlayerJoined. PlayerId: {player.PlayerId}");
+
+                // Get the next spawn point (server-controlled)
                 Transform spawnPoint = GetNextSpawnPoint();
-                //---
+                if (spawnPoint == null) return;
 
 
                 // Spawn the user prefab for the local user
-                NetworkObject networkPlayerObject = runner.Spawn(userPrefab, position: transform.position, rotation: transform.rotation, player, (runner, obj) =>
-                {
-                });
+                NetworkObject networkPlayerObject = runner.Spawn(
+                    userPrefab,
+                    position: spawnPoint.transform.position,
+                    rotation: spawnPoint.transform.rotation,
+                    inputAuthority: player,
+                    (runner, obj) => { });
+                // Keep track of the spawned object
+                _spawnedUsers[player] = networkPlayerObject;
+            }
+
+            else
+            {
+                Debug.LogError("User prefab is not assigned!");
             }
         }
 
@@ -101,13 +157,13 @@ namespace Fusion.XR.Shared
                 Debug.Log($"OnPlayerJoined. PlayerId: {player.PlayerId}");
                 // We make sure to give the input authority to the connecting player for their user's object
 
-                
-                 //--- Get the next spawn point
+
+                //--- Get the next spawn point
                 Transform spawnPoint = GetNextSpawnPoint();
                 //---
 
 
-                NetworkObject networkPlayerObject = runner.Spawn(userPrefab, position: transform.position, rotation: transform.rotation, inputAuthority: player, (runner, obj) =>
+                NetworkObject networkPlayerObject = runner.Spawn(userPrefab, position: spawnPoint.transform.position, rotation: spawnPoint.transform.rotation, inputAuthority: player, (runner, obj) =>
                 {
                 });
 
