@@ -77,111 +77,116 @@ namespace Fusion.XR.Shared
 
         #region Player spawn
 
-        // private readonly object spawnPointLock = new object();
-        // // Get the next spawn point and cycle through the list
-        // public Transform GetNextSpawnPoint()
-        // {
-        //     lock (spawnPointLock) // Ensure only one thread accesses this block at a time
-        //     {
-        //         if (spawnPoints.Count == 0)
-        //         {
-        //             Debug.LogError("No spawn points assigned!");
-        //             return null;
-        //         }
-
-        //         Transform spawnPoint = spawnPoints[currentSpawnIndex];
-        //         currentSpawnIndex = (currentSpawnIndex + 1) % spawnPoints.Count; // Cycle the index
-        //         return spawnPoint;
-        //     }
-        // }
-
-        //  private int currentSpawnIndex = 0;
-
-        public Transform GetNextSpawnPoint()
-        {
-            if (spawnPoints.Count == 0 )
-            {
-                Debug.LogError("No spawn points assigned!");
-                return null;
-            }
-
-            Debug.Log($"Current Spawn Index: {currentSpawnIndex}");
-
-            // Use the current index and increment it
-            int spawnIndex = currentSpawnIndex;
-            currentSpawnIndex = (currentSpawnIndex + 1) % spawnPoints.Count; // Cycle the index
-            Debug.Log($"New Spawn Index: {currentSpawnIndex}");
-            return spawnPoints[spawnIndex];
-
-        }
-
-
-
-
-
-
 
         public void OnPlayerJoinedSharedMode(NetworkRunner runner, PlayerRef player)
         {
-            if (player == runner.LocalPlayer && userPrefab != null)
+            Debug.Log($"[DEBUG] OnPlayerJoinedSharedMode called for player {player.PlayerId}");
+
+
+            if (runner.IsSharedModeMasterClient) // Ensure only the server assigns spawn points
             {
-                Debug.Log($"OnPlayerJoined. PlayerId: {player.PlayerId}");
+                Debug.Log("[DEBUG] Server is assigning spawn point.");
+                AssignSpawnPoint(player);
+            }
+            else if (runner.IsClient) // Clients request the server to assign them a spawn point
+            {
+                Debug.Log("[DEBUG] Client is requesting spawn point from server.");
+                AssignSpawnPoint(player);
 
-                // Get the next spawn point (server-controlled)
-                Transform spawnPoint = GetNextSpawnPoint();
-                if (spawnPoint == null) return;
+                //RPC_RequestSpawnPoint(player);
+            }
+        }
 
+        // Called by the server to assign a spawn point
+        private void AssignSpawnPoint(PlayerRef player)
+        {
+            Transform spawnPoint = GetNextSpawnPoint();
+            if (spawnPoint == null) return;
 
-                // Spawn the user prefab for the local user
-                NetworkObject networkPlayerObject = runner.Spawn(
+            NetworkObject networkPlayerObject = runner.Spawn(
                     userPrefab,
                     position: spawnPoint.transform.position,
                     rotation: spawnPoint.transform.rotation,
                     inputAuthority: player,
                     (runner, obj) => { });
-                // Keep track of the spawned object
-                _spawnedUsers[player] = networkPlayerObject;
-            }
+            // Keep track of the spawned object
+            _spawnedUsers[player] = networkPlayerObject;
 
-            else
-            {
-                Debug.LogError("User prefab is not assigned!");
-            }
+            // NetworkObject networkPlayerObject = runner.Spawn(
+            //     userPrefab,
+            //     position: spawnPoint.position,
+            //     rotation: spawnPoint.rotation,
+            //     inputAuthority: player
+            // );
+
+            // _spawnedUsers[player] = networkPlayerObject;
         }
-
-        public void OnPlayerJoinedHostMode(NetworkRunner runner, PlayerRef player)
+        public Transform GetNextSpawnPoint()
         {
-            // The user's prefab has to be spawned by the host
-            if (runner.IsServer && userPrefab != null)
+
+            if (spawnPoints.Count == 0)
             {
-                Debug.Log($"OnPlayerJoined. PlayerId: {player.PlayerId}");
-                // We make sure to give the input authority to the connecting player for their user's object
-
-
-                //--- Get the next spawn point
-                Transform spawnPoint = GetNextSpawnPoint();
-                //---
-
-
-                NetworkObject networkPlayerObject = runner.Spawn(userPrefab, position: spawnPoint.transform.position, rotation: spawnPoint.transform.rotation, inputAuthority: player, (runner, obj) =>
-                {
-                });
-
-                // Keep track of the player avatars so we can remove it when they disconnect
-                _spawnedUsers.Add(player, networkPlayerObject);
+                Debug.LogError("No spawn points assigned!");
+                return null;
             }
+
+            if (runner.IsSharedModeMasterClient)
+            {
+                Debug.Log($"[Server] Current Spawn Index: {currentSpawnIndex}");
+
+            }
+            else if (runner.IsClient)
+            {
+                currentSpawnIndex = 1; //% spawnPoints.Count;
+                Debug.Log($"[Server] New Spawn Index: {currentSpawnIndex}");
+                //  Debug.Log("Client is spawning");
+            }
+
+            return spawnPoints[currentSpawnIndex];
+            // Debug.Log($"Current Spawn Index: {currentSpawnIndex}");
+
         }
 
-        // Despawn the user object upon disconnection
-        public void OnPlayerLeftHostMode(NetworkRunner runner, PlayerRef player)
-        {
-            // Find and remove the players avatar (only the host would have stored the spawned game object)
-            if (_spawnedUsers.TryGetValue(player, out NetworkObject networkObject))
-            {
-                runner.Despawn(networkObject);
-                _spawnedUsers.Remove(player);
-            }
-        }
+        // // Clients request the server to assign them a spawn point
+        // [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        // private void RPC_RequestSpawnPoint(PlayerRef player)
+        // {
+        //     if (runner.IsServer)
+        //     {
+        //         AssignSpawnPoint(player);
+        //     }
+        // }
+
+
+
+
+
+        // if (player == runner.LocalPlayer && userPrefab != null)
+        // {
+        //     Debug.Log($"OnPlayerJoined. PlayerId: {player.PlayerId}");
+
+        //     // Get the next spawn point (server-controlled)
+        //     Transform spawnPoint = GetNextSpawnPoint();
+        //     if (spawnPoint == null) return;
+
+
+        //     // Spawn the user prefab for the local user
+        //     NetworkObject networkPlayerObject = runner.Spawn(
+        //         userPrefab,
+        //         position: spawnPoint.transform.position,
+        //         rotation: spawnPoint.transform.rotation,
+        //         inputAuthority: player,
+        //         (runner, obj) => { });
+        //     // Keep track of the spawned object
+        //     _spawnedUsers[player] = networkPlayerObject;
+        // }
+
+        // else
+        // {
+        //     Debug.LogError("User prefab is not assigned!");
+        // }
+
+
 
         #endregion
 
@@ -197,12 +202,55 @@ namespace Fusion.XR.Shared
                 OnPlayerJoinedSharedMode(runner, player);
             }
         }
+        public void OnPlayerJoinedHostMode(NetworkRunner runner, PlayerRef player)
+        {
+            // // The user's prefab has to be spawned by the host
+            // if (runner.IsSharedModeMasterClient && userPrefab != null)
+            // {
+            //     Debug.Log($"OnPlayerJoined. PlayerId: {player.PlayerId}");
+            //     // We make sure to give the input authority to the connecting player for their user's object
+
+
+            //     //--- Get the next spawn point
+            //     Transform spawnPoint = GetNextSpawnPoint();
+            //     //---
+
+
+            //     NetworkObject networkPlayerObject = runner.Spawn(userPrefab, position: spawnPoint.transform.position, rotation: spawnPoint.transform.rotation, inputAuthority: player, (runner, obj) =>
+            //     {
+            //     });
+
+            //     // Keep track of the player avatars so we can remove it when they disconnect
+            //     _spawnedUsers.Add(player, networkPlayerObject);
+            // }
+
+            // else if (runner.IsClient && userPrefab != null)
+            // {
+            //     Debug.Log("Client is requesting spawn point from server.");
+            //     RPC_RequestSpawnPoint(player);
+            // }
+        }
+        // Despawn the user object upon disconnection
+        public void OnPlayerLeftHostMode(NetworkRunner runner, PlayerRef player)
+        {
+            // // Find and remove the players avatar (only the host would have stored the spawned game object)
+            // if (_spawnedUsers.TryGetValue(player, out NetworkObject networkObject))
+            // {
+            //     runner.Despawn(networkObject);
+            //     _spawnedUsers.Remove(player);
+            // }
+        }
+
+
+
+
+
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
-            if (runner.Topology == Topologies.ClientServer)
-            {
-                OnPlayerLeftHostMode(runner, player);
-            }
+            // if (runner.Topology == Topologies.ClientServer)
+            // {
+            //     OnPlayerLeftHostMode(runner, player);
+            // }
         }
         #endregion
 
